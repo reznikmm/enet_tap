@@ -1,0 +1,29 @@
+name = "enet_tap"
+description = "ENet driver implementation over TUN/TAP device"
+version = "0.1.0-dev"
+
+authors = ["Max Reznik"]
+maintainers = ["Max Reznik <reznikmm@gmail.com>"]
+maintainers-logins = ["reznikmm"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = "https://github.com/reznikmm/enet_tap"
+tags = ["network", "drivers"]
+project-files = ["gnat/enet_tap.gpr"]
+
+[available.'case(os)']
+linux = true
+'...' = false
+
+[configuration]
+output_dir = "gnat"
+generate_ada = false
+generate_c = false
+
+[build-switches]
+development.optimization = ["-O0"]
+development.style_checks = ["-gnaty"]
+development.contracts = "Yes"
+"*".ada_version = "Ada2022"
+
+[[depends-on]]
+enet = "~0.1.0-dev"
