@@ -6,6 +6,7 @@
 with "enet_tap_config.gpr";
 project Enet_Tap is
 
+   for Languages use ("Ada", "C");
    for Library_Name use "Enet_Tap";
    for Library_Version use Project'Library_Name & ".so." & Enet_Tap_Config.Crate_Version;
 
@@ -21,6 +22,7 @@ project Enet_Tap is
 
    package Compiler is
       for Default_Switches ("Ada") use Enet_Tap_Config.Ada_Compiler_Switches;
+      for Default_Switches ("Ada") use ("-g");
    end Compiler;
 
    package Binder is
