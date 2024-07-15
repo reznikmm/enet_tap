@@ -3,7 +3,7 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
---  with Interfaces.C;
+with Interfaces.C;
 with Net.Headers;
 with Net.Protos;
 with Net.Protos.IPv4;
@@ -18,20 +18,24 @@ package body Net.Interfaces.Tap is
    -- Create --
    ------------
 
-   procedure Create (Self : in out Tap_Ifnet'Class) is
-      --  use Standard.Interfaces;
+   procedure Create
+     (Self : in out Tap_Ifnet'Class;
+      Tap  : String := "tap0")
+   is
+      use Standard.Interfaces;
 
       function create_tap
-        (FD : in out GNAT.OS_Lib.File_Descriptor) return Integer
+        (FD : in out GNAT.OS_Lib.File_Descriptor;
+         Tap : C.char_array) return Integer
           with Import, Convention => C;
 
-      Error : constant Integer := create_tap (Self.FD);
+      Name  : C.char_array := C.To_C (Tap);
+      Error : constant Integer := create_tap (Self.FD, Name);
    begin
       if Error < 0 then
          raise Program_Error
            with "Can't open tap: " & GNAT.OS_Lib.Errno_Message;
       end if;
-      null;
    end Create;
 
    ----------------

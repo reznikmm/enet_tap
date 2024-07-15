@@ -12,7 +12,7 @@
 #include <fcntl.h>
 
 int
-create_tap (int *fd)
+create_tap (int *fd, char* name)
 {
   int err;
   struct ifreq ifr;
@@ -20,7 +20,8 @@ create_tap (int *fd)
   if ((*fd = open ("/dev/net/tun", O_RDWR)) < 0)
     return *fd;
 
-  memset(&ifr, 0, sizeof(ifr));
+  memset (&ifr, 0, sizeof (ifr));
+  strncpy(ifr.ifr_name, name, IFNAMSIZ);
   ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
 
   if ((err = ioctl (*fd, TUNSETIFF, (void *)&ifr)) < 0)

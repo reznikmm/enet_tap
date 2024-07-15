@@ -9,7 +9,9 @@ package Net.Interfaces.Tap is
 
    type Tap_Ifnet is new Ifnet_Type with private;
 
-   procedure Create (Self : in out Tap_Ifnet'Class);
+   procedure Create
+     (Self : in out Tap_Ifnet'Class;
+      Tap  : String := "tap0");
 
 private
 

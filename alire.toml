@@ -26,4 +26,4 @@ development.contracts = "Yes"
 "*".ada_version = "Ada2022"
 
 [[depends-on]]
-enet = "~0.1.0-dev"
+enet = "^1.0.0"
