@@ -14,6 +14,8 @@ package body Net.Interfaces.Tap is
 
    function Get_Ip_Sum (Raw : Uint16_Array) return Uint16;
 
+   Callback : A0B.Callbacks.Callback;
+
    ------------
    -- Create --
    ------------
@@ -136,6 +138,21 @@ package body Net.Interfaces.Tap is
       end if;
 
       Packet.Release;
+
+      if A0B.Callbacks.Is_Set (Callback) then
+         A0B.Callbacks.Emit (Callback);
+      end if;
    end Send;
+
+   -----------------------
+   -- Set_Send_Callback --
+   -----------------------
+
+   procedure Set_Send_Callback
+     (Ifnet : in out Tap_Ifnet'Class;
+      Done  : A0B.Callbacks.Callback) is
+   begin
+      Callback := Done;
+   end Set_Send_Callback;
 
 end Net.Interfaces.Tap;

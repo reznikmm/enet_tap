@@ -27,3 +27,4 @@ development.contracts = "Yes"
 
 [[depends-on]]
 enet = "^1.0.0"
+a0b_callbacks = "0.1.0"

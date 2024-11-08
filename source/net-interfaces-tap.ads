@@ -5,6 +5,8 @@
 
 with GNAT.OS_Lib;
 
+with A0B.Callbacks;
+
 package Net.Interfaces.Tap is
 
    type Tap_Ifnet is new Ifnet_Type with private;
@@ -12,6 +14,11 @@ package Net.Interfaces.Tap is
    procedure Create
      (Self : in out Tap_Ifnet'Class;
       Tap  : String := "tap0");
+
+   procedure Set_Send_Callback
+     (Ifnet : in out Tap_Ifnet'Class;
+      Done  : A0B.Callbacks.Callback);
+   --  Assign the callback to be emited on a completion of each package sending
 
 private
 
