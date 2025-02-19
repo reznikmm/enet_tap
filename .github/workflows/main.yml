@@ -19,3 +19,4 @@ jobs:
       - name: Build and test
         run: |
           alr build
+          alr -C demos/ping build
