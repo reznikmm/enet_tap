@@ -4,6 +4,7 @@
 ----------------------------------------------------------------
 
 with Net.Buffers;
+with Net.DHCP;
 with Net.Interfaces;
 with Net.Interfaces.Tap;
 
@@ -13,6 +14,8 @@ package Network is
 
    function LAN return not null access Net.Interfaces.Ifnet_Type'Class;
    --  Network interface
+
+   DHCP : Net.DHCP.Client;
 
    procedure ICMP_Handler
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;

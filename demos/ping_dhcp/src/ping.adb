@@ -7,14 +7,17 @@ with Ada.Text_IO;
 with Ada.Real_Time;
 
 with Net.Buffers;
+with Net.DHCP;
 with Net.Protos.Arp;
 with Net.Protos.Dispatchers;
 with Net.Protos.Icmp;
 with Net.Protos.IPv4;
+with Net.Utils;
 
 with Network;
 
 procedure Ping is
+   use type Net.Ip_Addr;
 
    procedure Send_Ping (Host : Net.Ip_Addr; Seq : in out Net.Uint16);
    --  Send ICMP Echo Request to given Host and Seq. Increment Seq.
@@ -44,7 +47,9 @@ procedure Ping is
       end if;
    end Send_Ping;
 
-   Seq : Net.Uint16 := 0;
+   Prev_DHCP_State : Net.DHCP.State_Type := Net.DHCP.STATE_INIT;
+   Gateway         : Net.Ip_Addr := (0, 0, 0, 0);
+   Seq             : Net.Uint16 := 0;
 
 begin
    Ada.Text_IO.Put_Line ("Boot");
@@ -62,14 +67,36 @@ begin
    loop
       declare
          use type Ada.Real_Time.Time;
+         use all type Net.DHCP.State_Type;
 
-         Now    : constant Ada.Real_Time.Time := Ada.Real_Time.Clock;
-         Ignore : Ada.Real_Time.Time;
+         Now        : constant Ada.Real_Time.Time := Ada.Real_Time.Clock;
+         Ignore     : Ada.Real_Time.Time;
+         DHCP_State : Net.DHCP.State_Type;
       begin
          --  STM32.Board.Green_LED.Toggle; PA1 is used by LAN!!!
          Net.Protos.Arp.Timeout (Network.LAN.all);
+         Network.DHCP.Process (Ignore);
+         DHCP_State := Network.DHCP.Get_State;
 
-         Send_Ping (Network.LAN.Gateway, Seq);
+         if DHCP_State /= Prev_DHCP_State then
+            Prev_DHCP_State := DHCP_State;
+            Ada.Text_IO.Put_Line (DHCP_State'Image);
+
+            if DHCP_State = STATE_BOUND then
+               Ada.Text_IO.Put_Line
+                 (Net.Utils.To_String
+                    (Network.DHCP.Get_Config.Ip));
+               Gateway := Network.DHCP.Get_Config.Router;
+
+               if Gateway = (0, 0, 0, 0) then
+                  Gateway := Network.DHCP.Get_Config.Server;
+               end if;
+            end if;
+         end if;
+
+         if Gateway /= (0, 0, 0, 0) then
+            Send_Ping (Gateway, Seq);
+         end if;
 
          delay until Now + Ada.Real_Time.Seconds (1);
       end;

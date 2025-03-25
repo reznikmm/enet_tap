@@ -48,9 +48,6 @@ package body Network is
         (if Ada.Command_Line.Argument_Count = 0 then "tap0"
          else Ada.Command_Line.Argument (1));
    begin
-      MAC.Ip := (192, 168, 68, 117);
-      MAC.Gateway := (192, 168, 68, 116);
-      MAC.Netmask := (255, 255, 255, 0);
       MAC.Create (Tap => Argument);
 
       Net.Buffers.Add_Region
@@ -58,6 +55,7 @@ package body Network is
          Size => Buffer_Memory'Length);
 
       LAN_Receiver.Start;
+      DHCP.Initialize (MAC'Access);
    end Initialize;
 
 end Network;
